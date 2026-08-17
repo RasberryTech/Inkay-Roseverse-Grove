@@ -31,8 +31,11 @@
 
 #include "ca_pem.h" // generated at buildtime
 
+// Grove local tester target.
+// The Wii U eShop applet will load Grove's /geisha UI through the LAN proxy
+// running on the development PC.
 constexpr char wave_original[] = "https://ninja.wup.shop.nintendo.net/ninja/wood_index.html?";
-constexpr char wave_new[] =      "http://samurai.wup.shop." NETWORK_BASEURL "/ninja/wood_index.html?";
+constexpr char wave_new[] =      "http://192.168.1.194:3001/geisha";
 
 struct eshop_allowlist {
     char scheme[16];
@@ -48,9 +51,10 @@ constexpr struct eshop_allowlist original_entry = {
     .flags = {1, 1, 1, 1, 0},
 };
 
+// Allow the local Grove development server in the eShop applet.
 constexpr struct eshop_allowlist new_entry = {
     .scheme = "http",
-    .domain = "samurai.wup.shop." NETWORK_BASEURL,
+    .domain = "192.168.1.194",
     .path = "",
     .flags = {1, 1, 1, 1, 0},
 };
@@ -68,9 +72,7 @@ DECL_FUNCTION(int, FSOpenFile_eShop, FSClient *client, FSCmdBlock *block, char *
     }
 
     if (strcmp(initialOma, path) == 0) {
-        //below is a hacky (yet functional!) way to get Inkay to redirect URLs from the Miiverse applet
-        //we do it when loading this file since it should only load once, preventing massive lag spikes as it searches all of MEM2 xD
-
+        // Redirect the eShop applet's initial web UI to the local Grove tester.
         DEBUG_FUNCTION_LINE_VERBOSE("Inkay: hewwo eShop!\n");
 
         if (!replace(0x10000000, 0x10000000, wave_original, sizeof(wave_original), wave_new, sizeof(wave_new)))
