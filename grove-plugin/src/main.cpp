@@ -2,6 +2,7 @@
 #include <function_patcher/function_patching.h>
 #include <kernel/kernel.h>
 #include <coreinit/filesystem.h>
+#include <coreinit/memorymap.h>
 #include <utils/logger.h>
 #include <cstring>
 #include <cstdint>
@@ -63,7 +64,7 @@ DECL_FUNCTION(int, Grove_FSOpenFile, FSClient *client, FSCmdBlock *block, char *
               const char *mode, uint32_t *handle, int error) {
     constexpr char initialOma[] = "vol/content/initial.oma";
 
-    if (std::strcmp(initialOma, path) == 0) {
+    if (path && std::strcmp(initialOma, path) == 0) {
         const bool urlFound = replaceBytes(
             0x10000000, 0x10000000,
             kOriginalWave, sizeof(kOriginalWave),
