@@ -16,7 +16,7 @@ TARGET   := Grove
 BUILD    := build
 SOURCES  := src
 DATA     := data
-INCLUDES := src
+INCLUDES := src ../src
 
 OPT     := -Os -fno-exceptions -fno-asynchronous-unwind-tables
 CFLAGS  := -Wall -ffunction-sections -fdata-sections $(MACHDEP) $(OPT)
