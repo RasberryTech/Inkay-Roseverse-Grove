@@ -1,0 +1,23 @@
+name: Grove Plugin CI
+
+permissions:
+  contents: read
+
+on:
+  push:
+    branches: [main, grove-standalone-plugin]
+  pull_request:
+
+jobs:
+  build-grove-plugin:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v6
+      - name: Build toolchain container
+        run: docker build . -t builder
+      - name: Build Grove plugin
+        run: docker run --rm -v "${PWD}:/app" -w /app builder make -C grove-plugin -j$(nproc)
+      - uses: actions/upload-artifact@v7
+        with:
+          name: grove-plugin
+          path: grove-plugin/Grove.wps
